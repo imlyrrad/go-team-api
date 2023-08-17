@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +22,17 @@ Route::prefix('v1')->group(function () {
 //    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //        return $request->user();
 //    });
-    Route::post('account', function () {
-        return 'hello!';
+
+    /* Public APIs*/
+    Route::post('users', [UserController::class, 'store'])->name('users.store');
+    Route::post('auth', [AuthController::class, 'login'])->name('auth.login');
+
+    Route::middleware('auth:sanctum')->group(function () {
+        /* Private API*/
+        Route::delete('auth', [AuthController::class, 'logout'])->name('auth.logout');
+        Route::put('auth', [AuthController::class, 'verify'])->name('auth.verify');
+
+        Route::apiResource('tasks', TaskController::class);
     });
+
 });
